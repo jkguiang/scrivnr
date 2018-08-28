@@ -1,4 +1,5 @@
 var type = "none";
+var cursor_type = "default";
 
 function scrivnr() {
     $("[id*=-btn]").css("outline", "none");
@@ -11,6 +12,7 @@ function scrivnr() {
         selectionLineWidth: 2
     });
     var obj_count = 0;
+    // Handle mouse events on canvas
     canvas.on("mouse:down", function(evt) {
         if (type == "none") {
             return;
@@ -25,30 +27,35 @@ function scrivnr() {
         click.down = true;
     });
     canvas.on("mouse:move", function(evt) {
+        canvas.setCursor(cursor_type);
         if (type == "none" || !click.down) {
             return;
         }
         click.x2 = evt.pointer.x;
         click.y2 = evt.pointer.y;
-        drawShape(canvas, type, obj_count, getDims(click));
+        drawShape(canvas, type, obj_count, getDims(click), "move");
     });
     canvas.on("mouse:up", function(evt) {
         if (type == "none") {
             return;
         }
+        cursor_type = "default";
+        canvas.setCursor(cursor_type);
         click.x2 = evt.pointer.x;
         click.y2 = evt.pointer.y;
-        type = drawShape(canvas, type, obj_count, getDims(click));
+        type = drawShape(canvas, type, obj_count, getDims(click), "up");
         click.down = false;
         $("[id*=-btn]").css("color", "");
     });
-
+    // Handle mouse events off canvas
     $(window).on("mousedown", function(evt) {
         var html = (evt.target).outerHTML;
         if ((html.split("body")).length > 1) {
             type = "none"
             canvas.isDrawingMode = false;
             $("[id*=-btn]").css("color", "");
+            cursor_type = "default";
+            canvas.setCursor(cursor_type);
         }
     });
     // Toolbar Functions
@@ -68,10 +75,20 @@ function scrivnr() {
     // Shapes
     $("[id^=shapes-]").click(function() {
         type = $(this).attr("name");
+        cursor_type = "crosshair";
+        canvas.setCursor(cursor_type);
     });
     // Lines
     $("[id^=lines-]").click(function() {
         type = $(this).attr("name");
+        cursor_type = "crosshair";
+        canvas.setCursor(cursor_type);
+    });
+    // Textbox
+    $("#textbox-btn").click(function() {
+        type = "text";
+        cursor_type = "crosshair";
+        canvas.setCursor(cursor_type);
     });
 
 }
@@ -92,7 +109,7 @@ function getDims(click) {
     return dims;
 }
 
-function drawShape(canvas, type, obj_count, dims, click) {
+function drawShape(canvas, type, obj_count, dims, mouse_evt) {
     var shape;
     var coords = dims.coords;
     if (type == "rect") {
@@ -247,6 +264,16 @@ function drawShape(canvas, type, obj_count, dims, click) {
         });
         shape = new fabric.Group([ line, triangle1, triangle2 ]);
     }
+    else if (type == "text") {
+        var shape = new fabric.Textbox('Enter text here...', {
+            fill: 'black',
+            fontSize: 18,
+            left: dims.left,
+            top: dims.top,
+            width: dims.width,
+            height: dims.height
+        });
+    }
     else {
         return "none";
     }
@@ -254,6 +281,8 @@ function drawShape(canvas, type, obj_count, dims, click) {
     if (objects.length > obj_count) {
         canvas.remove(objects[obj_count]);
     }
+    (mouse_evt == "up") ? canvas.setActiveObject(null) : canvas.setActiveObject(shape);
+    canvas.selection = (mouse_evt == "up");
     canvas.add(shape);
     return "none";
 }
