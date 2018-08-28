@@ -14,11 +14,11 @@ function scrivnr() {
     var obj_count = 0;
     // Handle mouse events on canvas
     canvas.on("mouse:down", function(evt) {
-        if (type == "none") {
-            return;
-        }
         if (evt.target != null) {
             type = "none";
+            return;
+        }
+        if (type == "none") {
             return;
         }
         obj_count = (canvas.getObjects()).length;
@@ -36,6 +36,14 @@ function scrivnr() {
         drawShape(canvas, type, obj_count, getDims(click), "move");
     });
     canvas.on("mouse:up", function(evt) {
+        if ((canvas.getActiveObjects()).length != 0) {
+            console.log(canvas.getActiveObjects());
+            $("#delete-btn").removeAttr("disabled");
+            console.log("selected")
+        }
+        else {
+            $("#delete-btn").attr("disabled", "disabled");
+        }
         if (type == "none") {
             return;
         }
@@ -71,6 +79,7 @@ function scrivnr() {
     $("#draw-size").on("input", function() {
         var brush_size = $(this).val();
         canvas.freeDrawingBrush.width = brush_size;
+        $("#draw-label").text(brush_size+"px");
     });
     // Shapes
     $("[id^=shapes-]").click(function() {
@@ -89,6 +98,15 @@ function scrivnr() {
         type = "text";
         cursor_type = "crosshair";
         canvas.setCursor(cursor_type);
+    });
+    // Delete
+    $("#delete-btn").click(function() {
+        $("[id*=-btn]").css("color", "");
+        var to_delete = canvas.getActiveObjects();
+        console.log(to_delete);
+        for (var i = 0; i < to_delete.length; i++) {
+            canvas.remove(to_delete[i]);
+        }
     });
 
 }
@@ -281,7 +299,7 @@ function drawShape(canvas, type, obj_count, dims, mouse_evt) {
     if (objects.length > obj_count) {
         canvas.remove(objects[obj_count]);
     }
-    (mouse_evt == "up") ? canvas.setActiveObject(null) : canvas.setActiveObject(shape);
+    canvas.setActiveObject(shape);
     canvas.selection = (mouse_evt == "up");
     canvas.add(shape);
     return "none";

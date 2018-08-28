@@ -50,28 +50,24 @@
                         </ul>
                     </div>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn" id="image-btn">
-                            <span class="glyphicon glyphicon-picture"></span> Image
-                        </button>
-                    </div>
-                    <div class="btn-group" role="group">
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="draw-btn">
                              <span class="glyphicon glyphicon-pencil"></span> Draw <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
                             <li style="padding-right: 5px; padding-left: 5px;">
-                                <input type="range" min="1" max="15" value="1" class="slider" id="draw-size">
+                                <label for="draw-size"><p class="text-muted">Brush Size</p></label>
+                                <input type="range" min="1" max="15" value="1" id="draw-size"><p class="text-muted" style="text-align: center;" id="draw-label">1px</p></input>
                             </li>
                         </ul>
                     </div>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn" id="erase-btn">
-                            <span class="glyphicon glyphicon-erase"></span> Erase
+                        <button type="button" class="btn" id="textbox-btn">
+                            <span class="glyphicon glyphicon-unchecked"></span> Textbox
                         </button>
                     </div>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn" id="textbox-btn">
-                            <span class="glyphicon glyphicon-unchecked"></span> Textbox
+                        <button type="button" class="btn" id="delete-btn" disabled>
+                            <span class="glyphicon glyphicon-trash"></span> Delete
                         </button>
                     </div>
                     <div class="btn-group" role="group" style="float:right;">
