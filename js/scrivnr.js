@@ -36,13 +36,15 @@ function scrivnr() {
         drawShape(canvas, type, obj_count, getDims(click), "move");
     });
     canvas.on("mouse:up", function(evt) {
-        if ((canvas.getActiveObjects()).length != 0) {
-            console.log(canvas.getActiveObjects());
+        if (canvas.getActiveObjects().length != 0) {
             $("#delete-btn").removeAttr("disabled");
-            console.log("selected")
+            $("#bring-forward-btn").removeAttr("disabled");
+            $("#send-backward-btn").removeAttr("disabled");
         }
         else {
             $("#delete-btn").attr("disabled", "disabled");
+            $("#bring-forward-btn").attr("disabled", "disabled");
+            $("#send-backward-btn").attr("disabled", "disabled");
         }
         if (type == "none") {
             return;
@@ -82,6 +84,9 @@ function scrivnr() {
         $("#draw-label").text(brush_size+"px");
     });
     // Shapes
+    $("#shape-btn").click(function() {
+        
+    })
     $("[id^=shapes-]").click(function() {
         type = $(this).attr("name");
         cursor_type = "crosshair";
@@ -103,9 +108,24 @@ function scrivnr() {
     $("#delete-btn").click(function() {
         $("[id*=-btn]").css("color", "");
         var to_delete = canvas.getActiveObjects();
-        console.log(to_delete);
         for (var i = 0; i < to_delete.length; i++) {
             canvas.remove(to_delete[i]);
+        }
+        $("#delete-btn").attr("disabled", "disabled");
+    });
+    // Bring forward/backwards
+    $("#bring-forward-btn").click(function() {
+        $("[id*=-btn]").css("color", "");
+        var to_push = canvas.getActiveObjects();
+        for (var i = 0; i < to_push.length; i++) {
+            canvas.bringForward(to_push[i]);
+        }
+    });
+    $("#send-backward-btn").click(function() {
+        $("[id*=-btn]").css("color", "");
+        var to_pull = canvas.getActiveObjects();
+        for (var i = 0; i < to_pull.length; i++) {
+            canvas.sendBackwards(to_pull[i]);
         }
     });
 
